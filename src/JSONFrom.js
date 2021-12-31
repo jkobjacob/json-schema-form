@@ -5,9 +5,10 @@ import Field from "./Components/Field";
 export default function JSONForm({ schema }) {
   const [formState, setFormState] = useState({});
   const [formSchema, setFormSchema] = useState(schema);
+  const [isUpdateField, setIsUpdateField] = useState(false);
 
   useEffect(() => {
-    if (formSchema) {
+    if (formSchema && !isUpdateField) {
       const getFormState = Object.keys(formSchema).reduce((acc, key) => {
         return {
           ...acc,
@@ -19,7 +20,7 @@ export default function JSONForm({ schema }) {
       }, {});
       setFormState(getFormState);
     }
-  }, [formSchema]);
+  }, [formSchema, isUpdateField]);
 
   const handleDelete = useCallback(
     (field) => {
@@ -51,7 +52,9 @@ export default function JSONForm({ schema }) {
 
   const handleUpdateField = useCallback(
     (field, updatedField) => {
+      setIsUpdateField(true);
       const { [field]: a, ...rest } = formState;
+      const { [field]: aSchema, ...restSchema } = formSchema;
       console.log({ field, updatedField, a, rest });
       setFormState({
         ...rest,
@@ -60,8 +63,12 @@ export default function JSONForm({ schema }) {
           type: updatedField.type
         }
       });
+      setFormSchema({
+        ...restSchema,
+        [updatedField.name]: updatedField.type
+      });
     },
-    [formState]
+    [formState, formSchema]
   );
 
   useEffect(() => {
