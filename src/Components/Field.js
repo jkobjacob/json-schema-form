@@ -6,6 +6,7 @@ import EditField from "./EditField";
 
 export default function Field({
   type,
+  add,
   value,
   fieldLabel,
   onDelete,
@@ -34,6 +35,7 @@ export default function Field({
         label={fieldLabel}
         value={value}
         type={type}
+        edit={editModal}
         onValueChange={onValueChange}
       />
       <button onClick={() => setEditModal(true)}>edit</button>

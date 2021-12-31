@@ -1,18 +1,18 @@
 import React, { useState, useCallback } from "react";
 
-export default function EditField({
+export default function AddField({
   openModal,
   closeModal,
   type,
   types,
   label,
   value,
-  onFieldUpdate
+  onFieldAdd
 }) {
   const [field, setField] = useState({
     name: label,
     value: value,
-    type: type
+    type: "string"
   });
 
   const handleNameChange = useCallback((name) => {
@@ -29,39 +29,22 @@ export default function EditField({
     }));
   }, []);
 
-  const handleValueChange = useCallback((value) => {
+  /* const handleValueChange = useCallback((value) => {
     setField((prevState) => ({
       ...prevState,
       value
     }));
-  }, []);
+  }, []); */
 
   const handleFieldUpdate = useCallback(() => {
-    onFieldUpdate(label, field);
+    onFieldAdd(field);
     closeModal();
-  }, [label, field, onFieldUpdate, closeModal]);
+  }, [field, onFieldAdd, closeModal]);
 
-  const handleFieldValueChange = useCallback(
-    (event) => {
-      handleValueChange(
-        field.type === "boolean" ? event.target.checked : event.target.value
-      );
-    },
-    [field.type, handleValueChange]
-  );
-
-  const getType = useCallback((type) => {
-    switch (type) {
-      case "string":
-        return "text";
-      case "boolean":
-        return "checkbox";
-      case "number":
-        return "number";
-      default:
-        return "text";
-    }
-  }, []);
+  const validateFields = useCallback(() => {
+    console.log({ field });
+    return !field.name || !field.type /* || !field.value */;
+  }, [field]);
 
   return (
     <div className={openModal ? "modal modal-show" : "modal modal-hide"}>
@@ -71,7 +54,6 @@ export default function EditField({
             Field Name
             <input
               type="text"
-              disabled
               value={field.name}
               onChange={(e) => handleNameChange(e.target.value)}
             />
@@ -91,18 +73,20 @@ export default function EditField({
             </select>
           </label>
         </div>
-        <div className="item">
+        {/* <div className="item">
           <label>
             Field Value
             <input
-              type={getType(field.type)}
+              type="text"
               value={field.value}
-              onChange={handleFieldValueChange}
+              onChange={(e) => handleValueChange(e.target.value)}
             />
           </label>
-        </div>
+        </div> */}
       </div>
-      <button onClick={handleFieldUpdate}>update</button>
+      <button disabled={validateFields()} onClick={handleFieldUpdate}>
+        Add
+      </button>
       <button onClick={closeModal}>cancel</button>
     </div>
   );
